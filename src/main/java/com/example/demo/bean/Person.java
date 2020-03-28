@@ -24,10 +24,9 @@ import java.util.Map;
  *
  */
 //@PropertySource(value = {"classpath:person.properties"})
-
-//@ConfigurationProperties(prefix = "person") //从配置文件获取值
-//@Validated
 @Component
+@ConfigurationProperties(prefix = "person") //从配置文件获取值
+@Validated
 public class Person {
 
     /**
@@ -37,12 +36,12 @@ public class Person {
      */
 
    //lastName必须是邮箱格式
-   // @EmailN
-    @Value("${person.last-name}")
+    @Email
+//    @Value("${person.last-name}")
     private String lastName;
-    @Value("#{11*2}")
+//    @Value("#{11*2}")
     private Integer age;
-    @Value("true")
+//    @Value("true")
     private Boolean boss;
 
     private Date birth;
