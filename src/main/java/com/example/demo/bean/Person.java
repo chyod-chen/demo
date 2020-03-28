@@ -23,9 +23,9 @@ import java.util.Map;
  *  @ConfigurationProperties(prefix = "person")默认从全局配置文件中获取值；
  *
  */
-//@PropertySource(value = {"classpath:person.properties"})
+@PropertySource(value = {"classpath:person.properties"})//加载指定的配置文件
 @Component
-//@ConfigurationProperties(prefix = "person") //从配置文件获取值
+@ConfigurationProperties(prefix = "person") //从配置文件获取值
 @Validated
 public class Person {
 
@@ -45,7 +45,7 @@ public class Person {
     private Boolean boss;
 
     private Date birth;
-    @Value("${person.maps}") //这个会报错
+   // @Value("${person.maps}") //这个会报错
     private Map<String,Object> maps;
     private List<Object> lists;
     private Dog dog;
