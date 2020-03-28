@@ -24,9 +24,10 @@ import java.util.Map;
  *
  */
 //@PropertySource(value = {"classpath:person.properties"})
-@Component
-@ConfigurationProperties(prefix = "person")
+
+//@ConfigurationProperties(prefix = "person") //从配置文件获取值
 //@Validated
+@Component
 public class Person {
 
     /**
@@ -36,16 +37,16 @@ public class Person {
      */
 
    //lastName必须是邮箱格式
-   // @Email
-    //@Value("${person.last-name}")
+   // @EmailN
+    @Value("${person.last-name}")
     private String lastName;
-    //@Value("#{11*2}")
+    @Value("#{11*2}")
     private Integer age;
-    //@Value("true")
+    @Value("true")
     private Boolean boss;
 
     private Date birth;
-    //@Value("${person.maps}")
+//    @Value("${person.maps}") 这个会报错
     private Map<String,Object> maps;
     private List<Object> lists;
     private Dog dog;
