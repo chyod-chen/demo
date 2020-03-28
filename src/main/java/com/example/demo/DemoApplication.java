@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ImportResource;
 
-@ImportResource(locations = {"classpath:beans.xml"})
+//@ImportResource(locations = {"classpath:beans.xml"}) //不推荐使用
 @SpringBootApplication
 public class DemoApplication {
 
