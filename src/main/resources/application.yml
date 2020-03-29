@@ -1,22 +1,22 @@
-server:
-  port: 8081
-spring:
-  profiles:
-    active: prod
-
----
-server:
-  port: 8088
-spring:
-  profiles: dev
-
-
----
-
-server:
-  port: 8084
-spring:
-  profiles: prod
+#server:
+#  port: 8081
+#spring:
+#  profiles:
+#    active: prod
+#
+#---
+#server:
+#  port: 8088
+#spring:
+#  profiles: dev
+##以---作为文档块分界线,通过spring: profiles: dev 来指明这是dev配置文件
+#
+#---
+#
+#server:
+#  port: 8084
+#spring:
+#  profiles: prod
 
 
 
