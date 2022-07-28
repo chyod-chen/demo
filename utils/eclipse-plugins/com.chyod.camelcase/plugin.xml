@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin>
+
+   <extension point="org.eclipse.ui.commands">
+      <category
+            name="Category1"
+            id="com.chyod.camelcase.commands.category1">
+      </category>
+      <command
+            name="Command1"
+            categoryId="com.chyod.camelcase.commands.category1"
+            id="com.chyod.camelcase.commands.command1">
+      </command>
+   </extension>
+   <extension point="org.eclipse.ui.handlers">
+      <handler
+            commandId="com.chyod.camelcase.commands.command1"
+            class="com.chyod.camelcase.handlers.EditorShortcutsBaseHandler">
+      </handler>
+   </extension>
+   <extension point="org.eclipse.ui.bindings">
+      <key
+            commandId="com.chyod.camelcase.commands.command1"
+            contextId="org.eclipse.ui.contexts.window"
+            sequence="M1+M2+Z"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </key>
+   </extension>
+   
+</plugin>
