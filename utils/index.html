@@ -1,0 +1,769 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width"/>
+  <title>模拟列编辑工具</title>
+<style>
+.div-spe{height:10px;}
+.container{padding:10px;} 
+p { clear: both; padding-bottom: 2em; }
+form { margin-top: 2em; }
+form p .btn { margin-right: 1em; }
+textarea { margin: 1em 0;}
+.div-left{float:left;}
+.div-right{float:right;}
+.div-line{height:30px;width:100%;margin:5px;}
+.span-spe{width:2em;}
+img{ width: auto; height: auto; max-width: 100%; max-height: 100%; }
+
+
+.rotate{
+	-ms-transform:rotate(90deg); /* IE 9 */
+	-moz-transform:rotate(90deg); /* Firefox */
+	-webkit-transform:rotate(90deg); /* Safari and Chrome */
+	-o-transform:rotate(90deg); /* Opera */
+}　
+</style>
+    <script type="text/javascript" src="./seven.js"></script>
+</head>
+<body>
+<div class="container">
+<div>
+
+	<!--
+		
+		<video width="320" height="240" controls="controls" autoplay loop muted>
+		  <source src="movie.ogg" type="video/ogg">
+		  <source src="./media/video/2.mp4" type="video/mp4">
+		Your browser does not support the video tag.
+		</video>
+		<video width="320" height="240" controls="controls">
+		  <source src="movie.ogg" type="video/ogg">  
+		  <source src="./media/video/1.mp4" type="video/mp4">
+		Your browser does not support the video tag.
+		</video>
+	
+	<video width="320"  height="240" preload="auto" controls="controls" autoplay loop muted>	
+
+	-->
+ 
+	
+ <!--
+	<video width="320"  height="240" controls="controls" autoplay muted>
+	   <source src="movie.ogg" type="video/ogg"> 
+	  <source src="http://localhost:8089/showVideo" type="video/mp4">
+		Your browser does not support the video tag.
+	</video>
+	-->
+	<!--<video width="320"  height="240" controls="controls" autoplay muted>
+	    <source src="movie.ogg" type="video/ogg"> 
+	  <source src="http://localhost:8089/video" type="video/mp4">
+		Your browser does not support the video tag.
+	</video>  
+	<video preload="metadata" conrtols="true" src="blob:https://v.youku.com/13a0d11d-4733-4a26-bb3b-ea84876d05a0" style="width: 100%; height: 100%; background-color: rgb(0, 0, 0);"></video>
+	-->
+</div>
+<div>
+	<button onClick="enlarge()">放大+</button>
+	<button onClick="narrow()">缩小-</button>
+	<button onClick="turnAround(90)">顺时针旋转</button>
+	<button onClick="turnAround(-90)">逆时针旋转</button>
+</div>
+<div id="div-preview" style="height:61.8px;width:100.0px;margin:auto;">
+		<img src="./111.png"/>
+</div>
+<div>
+	comment
+	<textArea id="inputArr1"  rows="3" cols="100" ></textArea>
+	indexCode
+	<textArea id="inputArr2"  rows="3" cols="100" ></textArea>
+</div> 
+<div class="div-left">	
+	<textArea id="inputArea"  rows="30" cols="100" ></textArea>
+	<div class="div-line"></div>
+	<textarea id="inputText"  rows="20" cols="100"></textarea>
+</div>
+<div class="div-left">
+	<div class="div-line"><button onclick="getIndexMethodStr()">生成指标方法</button></div>
+	<div class="div-line"><button onclick="doTrim()">去空</button></div>
+	<div class="div-line"><button onclick="doTrimAll()">去换行</button></div>
+	<div class="div-line"><button onclick="changeStringType('StringBuilder')">转StringBuilder</button></div>
+	<div class="div-line"><button onclick="addQuotationMarks('')">前后加引号</button></div>
+	<div class="div-line"><button onclick="addQuotationMarks(',')">前后加引号加逗号</button></div>
+	<div class="div-line"><button onclick="winningCheck()">查中奖</button></div>	
+	<div class="div-line"><button onclick="clearStr()">清空特殊符号</button></div>	
+	
+	<div class="div-line"><button onclick="translateSpace('_')">转换空格为下划线</button></div>	
+	
+	<div class="div-line"><button onclick="addSpace(0)">:前后加空格</button></div>
+	<div class="div-line"><button onclick="addSpace(1)">=前后加空格</button></div>
+	
+	<div class="div-line">	
+		<input type="text" id="inputAdd" /><span class="span-spe"/>
+		<button onclick="appendStr(true)">追加字符串-全追加</button><span class="span-spe"/>
+		<button onclick="appendStr(false)">追加字符串-尾行不追加</button><span class="span-spe"/>
+	</div>
+   <div class="div-line"><button onclick="toCamelCase()">snake_case to camelCase</button></div>
+   <div class="div-line"><button onclick="toSnake_case()">camelCase to snake_case</button></div>
+
+	<div class="div-line"><button onclick="textToArr()" >转数组</button></div>
+	<div><textArea id="textToArr" rows="18" cols="20"></textArea></div>
+	<div class="div-line"><button onclick="lucklySeven()" >luckly</button><select id="lucklyOpts"></select></div>
+	<div><textArea id="seven" rows="18" cols="20"></textArea></div>
+	<div class="div-line"><button onclick="showInfo()" >显示内容</button></div>
+	<div class="div-line"><button onclick="showNodes()" >显示内容</button></div>
+	<div class="div-line"><button id="btnParse" onclick="showNode()">解析</button></div>
+    <!-- <div class="div-line"><input type="text" id="inputSearch" /></div> -->
+	
+</div>
+</div>
+</body>
+<script type="text/javascript">
+	window.onload = function(){
+	//var reg = /^[0|1]*$/;
+	var reg = /^[01]$/;
+ 
+	 document.getElementById("inputArea").onkeydown = function(e) {
+    //console.log(e.ctrlKey);
+		
+		if (90 == e.keyCode && e.ctrlKey && e.altKey)
+		{
+			//console.log(c1);
+			changeCodeCase();
+		   // saveComment();
+		}
+		
+		document.getElementById("inputArea").onmouseup=function(e){
+			 
+			 var content=window.getSelection().toString();
+			 if(content){
+				var len=content.length;
+				var target=e.target;
+				var position=target.innerHTML.indexOf(content);
+				var position2=position+len;
+				var tempstr1=target.innerHTML.substring(0,position);
+				var tempstr2=target.innerHTML.substring(position2);
+				content="<span style='color:red;'>"+content+"</span>";
+				target.innerHTML=tempstr1+content+tempstr2;
+			 }
+		}
+	
+		
+	
+	}
+
+ var obj = {};
+ var obj1 = "";
+ var obj2 = undefined;
+ var obj3 = null;
+ var obj4 = [];
+ var obj5 = "null";
+  
+ 
+	var arr = [];
+//	alert('副校长,校长/园长,正校长'.indexOf('校长'));
+//(function(){var element = document.getElementById("div-preview");
+//var r = 0;
+//var i = 1;
+//function rotate(){ 
+// r += i;
+// if( Math.abs(r) >= 180 ) i*=-1 
+// element.style.MozTransform = "rotate(" + r + "deg)";
+// element.style.webkitTransform ="rotate(" + r + "deg)";
+// element.style.msTransform = "rotate(" + r + "deg)";
+// element.style.OTransform = "rotate(" + r + "deg)";
+// element.style.transform = "rotate(" + r + "deg)";
+//}
+//var timer = setInterval(rotate,50);
+//element.onmouseover = function(){ clearInterval(timer);
+// timer = null;
+//};
+//element.onmouseout = function(){ if(timer)return;
+// timer = setInterval(rotate,30);
+//};
+//}());
+ 
+	
+	
+//	 joinStr(prop, label, model, numeric, prop.length);
+	
+ 
+//	var list = ['a','b','c'];
+//	alert(list.join(","));
+//	console.log(list.indexOf('a'));
+//	console.log(list.indexOf('ab'));
+//	var a = {};
+//	a.音乐 = '张三11';
+//	alert(a.音乐);
+//	var v1 = 1;
+//	var v2 = '0';
+//	var v2 = '0';
+//	var v3 = '1.1';
+//	var v4 = '-1';
+//	var v5 = '-1.1';
+//	
+//	
+// 
+//	alert(/(^[0-9]\d*$)/.test(v1));
+//	alert(/(^[0-9]\d*$)/.test(v2));
+//	alert(/(^[0-9]\d*$)/.test(v3));
+//	alert(/(^[0-9]\d*$)/.test(v4));
+//	alert(/(^[0-9]\d*$)/.test(v5));
+	 
+	
+//  var value = "0.01";
+//  if(!(/(^[0-9]\d*$)/.test(value))){
+//  	alert("不允许输入: matcher: /(^[0-9]\d*$)/" +"  value: "+ value );
+//  }else{
+//  	alert("允许输入: matcher: /(^[0-9]\d*$)/" +"  value: "+ value );
+//  }
+//  
+//  if(0){
+//  	alert(" 0 ");
+//  }else{
+//  	alert("1");
+//  }
+
+
+//	var str1 = "sys_up_date";
+//	var str2 = "sysUpDate";
+	//var res = upperNext(str1);
+	//console.log(res);
+//	  console.log(camelize(str1));
+//	
+//	console.log(capitalize(str2));
+
+	// console.log(capitalize(str1));
+	// console.log(camelize(str2));
+      var opt = "";
+      for(var j = 5; j < 20; j+=5){
+      	opt += "<option>"+j+"</option>";
+      }
+      document.getElementById("lucklyOpts").innerHTML = opt;
+
+
+  var arr = [];
+   for(var i = 1; i < 10; i++){
+      	var model = {};
+			model.id = i;
+			model.name = 'model'+i;
+			model.value = 'value'+i;
+			arr.push(model);
+				
+    }
+	
+	arr.splice(0,1);
+	console.log(arr);
+
+//var needStr = ["LXZFC01_01","LXZFC02_01","LXZFC03_01","LXZFC04_01","LXZFC05_01","LXZFC06_01","LXZFC07_01","LXZFC08_01","LXZFC09_01","LXZFC09_02","LXZFC09_03","LXZFC09_04","LXZFC09_05","LXZFC09_06","LXZFC09_07","LXZFC09_08","LXZFC09_09","LXZFC09_10","LXZFC09_11","LXZFC10_01","LXZFC11_01","LXZFC12_01","LXZFC13_01","LXZFC14_01","LXZFC15_01","LXZFC16_01","LXZFC17_01","LXZFC18_01","LXZFC19_01","LXZFC19_02","LXZFC20_01","LXZFC21_01","LXZFC21_02","LXZFC21_03","LXZFC22_01","LXZFC23_01","LXZFC24_01","LXZFC24_02","LXZFC24_03","LXZFC24_04","LXZFC24_05","LXZFC25_01","LXZFC25_02","LXZFC25_03","LXZFC25_04","LXZFC26_01","LXZFC26_02","LXZFC26_03","LXZFC27_01","LXZFC27_02","LXZFC27_03","LXZFC28_01","LXZFC29_01","LXZFC30_01","LXZFC30_02","LXZFC31_01","LXZFC32_01","LXZFC33_01","LXZFC33_02","LXZFC33_03","LXZFC34_01","LXZFC35_01","LXZFC35_02","LXZFC35_03","LXZFC36_01","LXZFC37_01","LXZFC38_01","LXZFC38_02","LXZFC39_01","LXZFC39_02","LXZFC39_03","LXZFC39_04","LXZFC39_05","LXZFC39_06","LXZFC40_01","LXZFC40_02","LXZFC41_01","LXZFC42_01","LXZFC42_02","LXZFC43_01","LXZFC44_01","LXZFC45_01","LXZFC46_01","LXZFC47_01","LXZFC48_01","LXZFC48_02","LXZFC49_01","LXZFC49_02","LXZFC49_03","LXZFC49_04","LXZFC50_01","LXZFC50_02","LXZFC50_03","LXZFC51_01","LXZFC51_02","LXZFC52_01","LXZFC53_01","LXZFC53_02","LXZFC53_03","LXZFC54_01","LXZFC55_01","LXDZ01_01","LXDZ02_01","LXDZ03_01","LXDZ04_01","LXDZ05_01","LXDZ06_01","LXDZ07_01","LXDZ08_01","LXDZ09_01","LXDZ10_01","LXDZ11_01","LXDZ12_01","LXDZ13_01","LXDZ14_01","LXDZ15_01","LXDZ16_01","LXDZ17_01","LXDZ18_01","LXDZ19_01","LXDZ20_01","LXDZ21_01","LXDZ22_01","LXDZ23_01","LXDZ24_01","LXDZ25_01","LXDZ26_01","LXDZ27_01","LXDZ28_01","LXDZ29_01","LXDZ30_01"];
+//
+//var dbStr = ["LXZFC30_01","LXZFC33_02","LXZFC35_01","LXZFC09_10","LXZFC39_01","LXZFC50_03","LXZFC40_01","LXZFC35_02","LXZFC24_01","LXZFC19_01","LXZFC27_01","LXZFC40_01","LXZFC48_01","LXZFC49_03","LXZFC50_03","LXZFC51_02","LXDZ23_01","LXDZ25_01","LXZFC09_07","LXZFC09_08","LXZFC09_02","LXZFC21_03","LXZFC21_03","LXZFC19_02","LXZFC19_01","LXZFC09_01","LXZFC51_02","LXZFC35_02","LXZFC24_01","LXZFC27_01","LXZFC40_01","LXZFC48_01","LXZFC49_03","LXDZ23_01","LXDZ25_01","LXZFC09_07","LXZFC09_08","LXZFC09_09","LXZFC26_01","LXZFC19_01","LXZFC24_02","LXZFC50_02","LXZFC51_01","LXZFC09_06","LXZFC09_03","LXZFC09_04","LXZFC09_05","LXZFC09_11","LXZFC21_02","LXZFC26_02","LXZFC27_02","LXZFC27_03","LXZFC33_01","LXZFC38_01","LXZFC39_02","LXZFC39_05","LXZFC42_01","LXZFC49_01","LXZFC49_02","LXZFC24_02","LXZFC53_01","LXZFC53_02","LXZFC53_03","LXZFC09_01","LXZFC26_02","LXZFC26_01","LXZFC48_01","LXZFC39_05","LXZFC09_01","LXZFC33_02","LXZFC35_01","LXZFC09_02","LXZFC09_03","LXZFC09_04","LXZFC09_05","LXZFC09_06","LXZFC19_02","LXZFC21_02","LXZFC26_01","LXZFC24_01","LXZFC24_02","LXZFC33_02","LXZFC09_10","LXZFC30_01","LXZFC35_02","LXZFC09_09","LXZFC09_09","LXZFC09_02","LXZFC09_03","LXZFC09_04","LXDZ23_01","LXZFC09_05","LXZFC09_06","LXZFC21_02","LXZFC26_02","LXZFC30_01","LXZFC35_01","LXZFC35_02","LXZFC19_02","LXZFC21_03","LXZFC24_01","LXZFC19_01","LXZFC50_03","LXZFC51_02","LXZFC49_03","LXZFC27_01","LXDZ25_01","LXZFC09_07","LXZFC09_08","LXZFC09_10","LXZFC09_11","LXZFC27_02","LXZFC27_03","LXZFC38_01","LXZFC39_01","LXZFC49_01","LXZFC49_02","LXZFC50_02","LXZFC51_01","LXZFC53_01","LXZFC53_02","LXZFC53_03","LXZFC39_02","LXZFC42_01","LXZFC33_01","LXZFC19_02","LXZFC26_01","LXZFC30_01","LXZFC33_02","LXZFC35_01","LXZFC24_02","LXZFC09_06","LXZFC49_02","LXZFC09_03","LXZFC09_04","LXZFC09_05","LXZFC09_11","LXZFC21_02","LXZFC21_03","LXZFC26_02","LXZFC27_02","LXZFC27_03","LXZFC33_01","LXZFC38_01","LXZFC39_01","LXZFC39_02","LXZFC39_05","LXZFC42_01","LXZFC49_01","LXZFC50_02","LXZFC51_01","LXZFC53_01","LXZFC53_02","LXZFC53_03","LXZFC09_01","LXZFC09_02"];
+//
+//var tempList = [];
+//
+//needStr.forEach(function(item){
+//	if(dbStr.indexOf(item) == -1){
+//		tempList.push(item);
+//	}
+//	
+//});
+//console.log(tempList);
+ 
+}
+/**
+* 字符串转格式
+*/
+function changeStringType(type){
+	let pre = type + " sb = new " + type + "();\n"	 
+	setShowValue(pre +changeToStringBuilder(getShowValue()));
+}
+/**
+* 字符串转格式
+*/
+function changeToStringBuilder(str){
+	let pre = 'sb.append(" ';
+	let suf = ' ");'
+	str = str.replace(/\n|\r+/g, suf + '\n'+pre);
+	str = pre + str+ suf;
+	return str;
+}
+/**
+* 前后加引号
+*/
+function addQuotationMarks(spe){	 
+	setShowValue(addQuotationMarksAndSpe(getShowValue(), spe));
+}
+
+/**
+* 前后加空格且可带分隔符
+*/
+function addQuotationMarksAndSpe(str, spe){ 
+	str = str.replace(/\n|\r+/g,"'"+spe+"\n'");
+	str = "'" + str+ "'";
+	return str;
+}
+
+function translateSpace(spe){ 
+	 setShowValue(translateSpaceWithSpe(getShowValue(), spe));
+}
+/**
+* 前后加空格且可带分隔符
+*/
+function translateSpaceWithSpe(str, spe){  
+	return str.replace(/ | |\t+/g, spe );
+}
+
+function getIndexMethodStr(){
+	
+	var commentEL = document.getElementById("inputArr1");
+	var idnexCodeEL = document.getElementById("inputArr2");
+	
+//  var comments = ["在校生年辍学率-小学","在校生年辍学率-初中","在校生年辍学率-高中","小学科学、体音美、综合实践活动课程专任教师","中学体音美、综合实践活动课程专任教师","高中通用技术课程专任教师","各学科考试的及格率","全科及格率","毕业生基本都能掌握体育运动技能","《学生体质健康标准》测定合格率","毕业生基本能够掌握一项艺术特长"];
+//  var indexCodes = ["SZC14_01","SZC14_02","SZC14_03","SZC16_01","SZC16_02","SZC16_03","SZC36_01","SZC36_02","SZC37_01","SZC37_02","SZC38_01"];
+	var comments = commentEL.value.split(",");
+	var indexCodes = idnexCodeEL.value.split(",");
+	var str = "";
+	for(var i = 0; i < comments.length; i++){
+
+		str +=  doIndexCalculation(comments[i], indexCodes[i])+"\n";
+		
+	}
+	console.log(str);
+	setShowValue(str);
+
+}
+
+function textToArr(){
+	var textEL = document.getElementById("textToArr");
+	var str = textEL.value;
+	str = str.replace(/\t|\ +/g, "");
+	var strs = str.split("\n");
+ 
+	str = "";
+	for(var i = 0; i < strs.length; i++){
+		if(i > 0){
+			str += ",";
+		}
+		//str += "\"" + strs[i] + "\"";		
+		str +=   strs[i].trim()  ;		
+	}
+	str = str.replace(/\n|\r|\t|\ +/g,"");
+	textEL.value = str;
+}
+/**
+ * 用来获取指标计算的DAO层方法
+ */
+function doIndexCalculation(comment , indexCode){	
+//模板 
+// "   /**"
+// "    * 在校生年辍学率 - 小学    "
+// "    * @param year              "
+// "    * @param snapshotDate      "
+// "    * @return                  "
+// "    */                         "
+// "   List<Object[]> getSchoolSZC14_01(String year, String snapshotDate);"
+    var res = "   /**  \n"
+	+ "    * "+comment+"    \n"
+	+ "    * @param year              \n"
+ 	+ "    * @param snapshotDate      \n"
+	+ "    * @return                  \n"
+	+ "    */                         \n"
+	+ "   List<Object[]> getSchool"+indexCode+"(String year, String snapshotDate); \n"
+	return res;
+}
+	
+function doTrim(){
+	setShowValue(diyTrim((getShowValue())));
+}
+
+function doTrimAll(){
+	setShowValue(getShowValue().replace(/\n|\r|\t|\ +/g,""));
+}
+
+function diyTrim(str){ 					
+  return str.replace(/\t|\ +/g, "");
+}
+function allTrim(str){
+   return str.replace(/\s/g, "");
+}
+
+function addSpace(num){
+	var str = document.getElementById("inputArea").value;
+	var spe;
+	var pattern;
+	switch(num){
+		case 0:
+		spe = ' : ';
+		pattern = new RegExp("[:]");
+		break;
+		case 1:
+		spe = ' = ';
+		pattern = new RegExp("[=]");
+		break;	 
+	}	
+	replaceSyntax(pattern,spe);
+}
+
+function replaceSyntax(pattern , spe){
+	var s = getShowValue();
+	var rs = "";
+	for (var i = 0; i < s.length; i++) {
+        rs = rs + s.substr(i, 1).replace(pattern, spe);
+    }	
+	setShowValue(rs);
+} 
+
+function appendStr(add){
+    var inputAdd = document.getElementById("inputAdd");
+	var string = inputAdd.value;
+	var str =  string+'\n';
+	var s = getShowValue();
+	var pattern = new RegExp("[\n]");
+	var rs = "";
+	for (var i = 0; i < s.length; i++) {
+        rs = rs + s.substr(i, 1).replace(pattern, str);
+    }
+	if ( add && rs.substr(rs.length-str.length).indexOf(str) == -1) {
+		rs += allTrim(str);
+	}
+	setShowValue(rs);
+}
+
+function stripscript(s,spe) {
+	var pattern = new RegExp("[`~!@#$^&*()=|{}':;',\\[\\].<>/?~！@#￥……&*（）—|{}【】‘；：”“'。，、？]");
+	var rs = "";
+	for (var i = 0; i < s.length; i++) {
+			rs = rs + s.substr(i, 1).replace(pattern, spe);
+		}
+	return rs;
+}
+function getShowValue(){
+	return document.getElementById("inputArea").value;
+}
+function setShowValue(v){	 
+	document.getElementById("inputArea").value = v;
+}
+
+function removeSpecificSymbol(s){
+	var pattern = new RegExp("[`~!@#$^&*()=|{}'\":;',\\[\\].<>/?~！@#￥……&*（）—|{}【】‘；：”“'。，、？]");
+	var rs = "";
+	for (var i = 0; i < s.length; i++) {
+        rs = rs + s.substr(i, 1).replace(pattern, '');
+    }
+	return rs;
+}
+function clearStr(){  
+	var v = getShowValue();
+		var s = removeSpecificSymbol(v);
+	setShowValue(s);
+}
+function toCamleCase(s){
+	var pattern = new RegExp("[—_]");
+	var rs = "";
+	for (var i = 0; i < s.length; i++) {
+        rs = rs + s.substr(i, 1).replace(pattern, '');
+    }
+	return rs;
+}
+
+//random 7 numbers
+function lucklySeven(){
+	var prefix = "[";
+	var suffix = "]";
+	var spe = ",";
+	 
+	 prefix = "";
+	 suffix = "";
+	 spe = "";
+	
+	var lines = document.getElementById("lucklyOpts").value;
+	var result = "";
+	for(var i = 0; i < lines; i++){
+	//for(var i = 0; i < 10000; i++){
+		var fiveIn35 = [];
+		var fiveIn12 = [];
+		var number5 = 0;
+		var number2 = 0;
+		while(fiveIn35.length < 5){
+			number5 = Math.floor(Math.random()*35)+1;
+			if( fiveIn35.indexOf(number5) == -1){
+				fiveIn35.push(number5);
+			}
+		}
+		fiveIn35.sort(ascSort);
+		while(fiveIn12.length < 2){
+			number2 = Math.floor(Math.random()*12)+1;
+			if( fiveIn12.indexOf(number2) == -1){
+				fiveIn12.push(number2);
+			}
+		}
+		fiveIn12.sort(ascSort);
+		result += prefix + fiveIn35.join(",") +","+ fiveIn12.join(",")+ suffix + spe;
+		result += "\n";
+	}
+	console.log(result);
+	document.getElementById("seven").value = result;
+}
+
+function showInfo(){
+	 var s = getShowValue();
+	 var rs = "";
+	for (var i = 0; i < s.length; i++) {
+		if(s.substr(i, 1) == "\r"){
+			rs += "\r";
+			console.log(i);
+		}
+		if(s.substr(i, 1) == "\n"){
+			rs += "\n";
+			console.log(i);
+		}
+    }
+	console.log(rs);
+}
+
+function ascSort(a,b){
+	return a - b;
+}
+function descSort(a,b){
+	return  b - a;
+}
+ 
+ //---- 加载 XML 文档的函数 ----
+ function loadXMLDoc(xmlFile){    
+	var xmlDoc;    
+		try{        
+			 //Internet Explorer 可以使用其原生方法加载 XML       
+			 xmlDoc=new ActiveXObject("Microsoft.XMLDOM");    
+		}catch(e){        try{            
+			 //Firefox 也有标准方法,但可能造成其他浏览器报错,故省略            
+			 //使用 XMLHttpRequest 替代,适用于大部分浏览器          
+			 var xmlHttp=new XMLHttpRequest() ;           
+			 xmlHttp.open("GET",xmlFile,false) ;           
+			 xmlHttp.send(null) ;           
+			return xmlHttp.responseXML;  
+		}catch(e){          
+			 return null;       
+		}
+	}   
+	 xmlDoc.async=false;
+	 xmlDoc.load(xmlFile); 
+	 return xmlDoc;
+ }
+ 
+ function showNodes(){
+	 //---- 解析 names.xml 的例子 ----
+	 var xml=loadXMLDoc("C:\Users\tianwen02\Desktop\security_staff_info.xml");
+	 //获取 XML 文档
+	 var domElems=xml.getElementsByTagName("Text");
+	 //获取文档中"name"元素节点集合(数组)
+	 var strNames=new Array(domElems.length);
+	 //创建"strNames"数组用于存储"用户名"
+	for(var i=0;i<domElems.length;i++){    
+		strNames[i]=domElems[i].childNodes[0].data;
+	}
+	//取得"name"元素节点的子节点(文本节点)的数据,并存入"strNames"数组
+	alert(strNames.join());
+	//测试,输出"strNames"数组(预期结果:"张三,李四,王五")// 
+}
+
+function showNode(){
+	var xmlStr = document.getElementById("inputText").value;
+	splitTextC(xmlStr);
+}
+
+/**
+* 特殊xml文档的切割, 具有一定局限性
+*/　
+function splitTextC(str){
+	var fields = [];
+    var strs = str.split("</BindingField>");
+	for (var i = 0; i < strs.length; i++) {
+		var resTemp = strs[i].split(">");
+		var res = resTemp[resTemp.length-1];
+		fields.push(res);
+	}
+ 	
+   console.log(fields.join(",\n"));
+   	var names = [];
+   	var strings = str.split("</Text>");
+    for (var i = 0; i < strings.length; i++) {
+		var resTemp = strings[i].split(">");
+			var res = resTemp[resTemp.length-1];
+			names.push(res);
+	}
+   console.log(names.join(",\n"));  
+}
+
+function toCamelCase(){
+    setShowValue(upperNext(getShowValue()));
+}
+
+function toSnake_case(){
+	setShowValue(capitalize(getShowValue()));
+}
+
+function changeCodeCase(){
+	var word = getShowValue();
+	if (word && word.indexOf("_") > 0) {
+		toCamelCase();
+	} else {
+		toSnake_case();
+	}	
+}
+
+//snake_case to camelCase
+function upperNext(s){
+    var rs = "";
+    var	tmpStr = "";
+	for (var i = 0; i < s.length; i++) {
+        rs +=  (( tmpStr = s.substr(i, 1)) == '_') ? s.substr(++i, 1).toUpperCase() : tmpStr;
+    }	
+	return rs;
+}
+
+
+
+function camelize(str) {
+    return str.replace(/_(\w)/g,  function (_, c) {
+           return c ? c.toUpperCase() : ''; 
+    });
+}
+
+function capitalize(str) {
+    return str.replace(/\B([A-Z])/g, '_$1').toLowerCase();
+}
+
+
+function joinStr(prop, label, model, numeric, size){
+	var rowNums = 3;
+	var res = "";
+	var row = "<vue-row> \n";
+	for (var i = 0; i < size; i++) {
+         
+		var col =  "  <vue-col :span=\"8\"> \n"
+				 + "     <vue-form-item prop=\""+prop[i]+"\" label=\""+label[i]+"\"> \n"								
+				 + "		<vue-input v-model=\""+ model[i] +"\" type=\"text\"";
+		if(numeric[i]){				
+			col +=":cleave=\"{numeral: true,numeralDecimalScale:2}\"";
+		}	 
+		col +=     " ></vue-input> \n"									
+				 + "	 </vue-form-item> \n"									
+				 + "  </vue-col> \n"									
+		row += 	col	
+		
+		rowNums--									
+		if(rowNums == 0){
+			row += "</vue-row> \n"
+			res += row;
+			row = "<vue-row> \n";
+			rowNums = 3;
+		}		 
+    }
+	console.log(res);
+	setShowValue(res);
+}
+var prop = ["year","考生号","姓名","学籍号","全国学籍号","中学代码","中学名称","性别","出生年月","考生类别","民族","政治面貌","户籍","户籍所在地","证件类型","身份证号","联系人","家庭住址","籍贯","联系电话","邮政编码","邮寄地址","综合素质","联系手机","户口地址","体育等级","体育备注","录取情况","录取类别","志愿情况","退档记录","原始等级合计","原始等级序号","等级合计","等级序号","语数英成绩","一级投档分","二三级投档分","照顾分数","照顾等级","扣除分数","语文成绩","语文等级","数学成绩","数学等级","英语成绩","英语等级","物理等级","物理成绩","政治等级","政治成绩","历史等级","历史成绩","化学等级","化学成绩","地理等级","生物等级","注意录取","计生","见义勇为","军人","三侨","少数民族","学科竞赛","因公牺牲","优干","无两年学籍","超三年学历","省内非晋江户籍","省外非晋江户籍","泉州非晋江户籍","往届生","无籍生","户籍名不一致","备注","库中姓名","五年师院第一志愿校号","五年师院校第一志愿名称","第一志愿专业一代码","第一志愿专业一","第一志愿专业二代码","第一志愿专业二","五年师院第二志愿校号","五年师院校第二志愿名称","第二志愿专业一代码","第二志愿专业一","第二志愿专业二代码","第二志愿专业二","泉州统招第一志愿代码","泉州统招第一志愿","一级统招第一志愿代码","一级统招第一志愿","一级统招第二志愿代码","一级统招第二志愿","一级统招第三志愿代码","一级统招第三志愿","一级统招第四志愿代码","一级统招第四志愿","一级定向第一志愿代码","一级定向第一志愿","一级定向第二志愿代码","一级定向第二志愿","一级定向第三志愿代码","一级定向第三志愿","一级定向第四志愿代码","一级定向第四志愿","一级择校第一志愿代码","一级择校第一志愿","一级择校第二志愿代码","一级择校第二志愿","一级择校第三志愿代码","一级择校第三志愿","一级择校第四志愿代码","一级择校第四志愿","二级统招第一志愿代码","二级统招第一志愿","二级统招第二志愿代码","二级统招第二志愿","二级统招第三志愿代码","二级统招第三志愿","二级统招第四志愿代码","二级统招第四志愿","二级择校第一志愿代码","二级择校第一志愿","二级择校第二志愿代码","二级择校第二志愿","二级择校第三志愿代码","二级择校第三志愿","二级择校第四志愿代码","二级择校第四志愿","三级统招第一志愿代码","三级统招第一志愿","三级统招第二志愿代码","三级统招第二志愿","三级择校第一志愿代码","三级择校第一志愿","三级择校第二志愿代码","三级择校第二志愿","民办第一志愿代码","民办第一志愿","普高第一志愿代码","普高第一志愿","五年非师院第一志愿校号","五年非师院校第一志愿名称","非师第一志愿专业一代码","非师第一志愿专业一","非师第一志愿专业二代码","非师第一志愿专业二","五年非师院第二志愿校号","五年非师院校第二志愿名称","非师第二志愿专业一代码","非师第二志愿专业一","非师第二志愿专业二代码","非师第二志愿专业二","职专第一志愿校号","职专第一志愿名称","职专第一志愿专业一代码","职专第一志愿专业一","职专第一志愿专业二代码","职专第一志愿专业二","职专第二志愿校号","职专第二志愿名称","职专第二志愿专业一代码","职专第二志愿专业一","职专第二志愿专业二代码","职专第二志愿专业二","职专第三志愿校号","职专第三志愿名称","职专第三志愿专业一代码","职专第三志愿专业一","职专第三志愿专业二代码","职专第三志愿专业二","职专第四志愿校号","职专第四志愿名称","职专第四志愿专业一代码","职专第四志愿专业一","职专第四志愿专业二代码","职专第四志愿专业二","控制线","志愿审核","sys_add_user","sys_add_date","sys_upd_user","sys_upd_date","rank_score","rank","资格审查","成绩排名","中考年","中学id","中学代号","生成者","生成日期","更新者","更新日期"];
+var label = ["年份","考生号","姓名","学籍号","全国学籍号","中学代码","中学名称","性别","出生年月","考生类别","民族","政治面貌","户籍","户籍所在地","证件类型","身份证号","联系人","家庭住址","籍贯","联系电话","邮政编码","邮寄地址","综合素质","联系手机","户口地址","体育等级","体育备注","录取情况","录取类别","志愿情况","退档记录","原始等级合计","原始等级序号","等级合计","等级序号","语数英成绩","一级投档分","二三级投档分","照顾分数","照顾等级","扣除分数","语文成绩","语文等级","数学成绩","数学等级","英语成绩","英语等级","物理等级","物理成绩","政治等级","政治成绩","历史等级","历史成绩","化学等级","化学成绩","地理等级","生物等级","注意录取","计生","见义勇为","军人","三侨","少数民族","学科竞赛","因公牺牲","优干","无两年学籍","超三年学历","省内非晋江户籍","省外非晋江户籍","泉州非晋江户籍","往届生","无籍生","户籍名不一致","备注","库中姓名","五年师院第一志愿校号","五年师院校第一志愿名称","第一志愿专业一代码","第一志愿专业一","第一志愿专业二代码","第一志愿专业二","五年师院第二志愿校号","五年师院校第二志愿名称","第二志愿专业一代码","第二志愿专业一","第二志愿专业二代码","第二志愿专业二","泉州统招第一志愿代码","泉州统招第一志愿","一级统招第一志愿代码","一级统招第一志愿","一级统招第二志愿代码","一级统招第二志愿","一级统招第三志愿代码","一级统招第三志愿","一级统招第四志愿代码","一级统招第四志愿","一级定向第一志愿代码","一级定向第一志愿","一级定向第二志愿代码","一级定向第二志愿","一级定向第三志愿代码","一级定向第三志愿","一级定向第四志愿代码","一级定向第四志愿","一级择校第一志愿代码","一级择校第一志愿","一级择校第二志愿代码","一级择校第二志愿","一级择校第三志愿代码","一级择校第三志愿","一级择校第四志愿代码","一级择校第四志愿","二级统招第一志愿代码","二级统招第一志愿","二级统招第二志愿代码","二级统招第二志愿","二级统招第三志愿代码","二级统招第三志愿","二级统招第四志愿代码","二级统招第四志愿","二级择校第一志愿代码","二级择校第一志愿","二级择校第二志愿代码","二级择校第二志愿","二级择校第三志愿代码","二级择校第三志愿","二级择校第四志愿代码","二级择校第四志愿","三级统招第一志愿代码","三级统招第一志愿","三级统招第二志愿代码","三级统招第二志愿","三级择校第一志愿代码","三级择校第一志愿","三级择校第二志愿代码","三级择校第二志愿","民办第一志愿代码","民办第一志愿","普高第一志愿代码","普高第一志愿","五年非师院第一志愿校号","五年非师院校第一志愿名称","非师第一志愿专业一代码","非师第一志愿专业一","非师第一志愿专业二代码","非师第一志愿专业二","五年非师院第二志愿校号","五年非师院校第二志愿名称","非师第二志愿专业一代码","非师第二志愿专业一","非师第二志愿专业二代码","非师第二志愿专业二","职专第一志愿校号","职专第一志愿名称","职专第一志愿专业一代码","职专第一志愿专业一","职专第一志愿专业二代码","职专第一志愿专业二","职专第二志愿校号","职专第二志愿名称","职专第二志愿专业一代码","职专第二志愿专业一","职专第二志愿专业二代码","职专第二志愿专业二","职专第三志愿校号","职专第三志愿名称","职专第三志愿专业一代码","职专第三志愿专业一","职专第三志愿专业二代码","职专第三志愿专业二","职专第四志愿校号","职专第四志愿名称","职专第四志愿专业一代码","职专第四志愿专业一","职专第四志愿专业二代码","职专第四志愿专业二","控制线","志愿审核","sys_add_user","sys_add_date","sys_upd_user","sys_upd_date","rank_score","rank","资格审查","成绩排名","中考年","中学id","中学代号","生成者","生成日期","更新者","更新日期"];
+var model = [
+				"dialogFrm.year","dialogFrm.考生号","dialogFrm.姓名","dialogFrm.学籍号","dialogFrm.全国学籍号","dialogFrm.中学代码","dialogFrm.中学名称","dialogFrm.性别","dialogFrm.出生年月","dialogFrm.考生类别","dialogFrm.民族","dialogFrm.政治面貌","dialogFrm.户籍","dialogFrm.户籍所在地","dialogFrm.证件类型","dialogFrm.身份证号","dialogFrm.联系人","dialogFrm.家庭住址","dialogFrm.籍贯","dialogFrm.联系电话","dialogFrm.邮政编码","dialogFrm.邮寄地址","dialogFrm.综合素质","dialogFrm.联系手机","dialogFrm.户口地址","dialogFrm.体育等级","dialogFrm.体育备注","dialogFrm.录取情况","dialogFrm.录取类别","dialogFrm.志愿情况","dialogFrm.退档记录","dialogFrm.原始等级合计","dialogFrm.原始等级序号","dialogFrm.等级合计","dialogFrm.等级序号","dialogFrm.语数英成绩","dialogFrm.一级投档分","dialogFrm.二三级投档分","dialogFrm.照顾分数","dialogFrm.照顾等级","dialogFrm.扣除分数","dialogFrm.语文成绩","dialogFrm.语文等级","dialogFrm.数学成绩","dialogFrm.数学等级","dialogFrm.英语成绩","dialogFrm.英语等级","dialogFrm.物理等级","dialogFrm.物理成绩","dialogFrm.政治等级","dialogFrm.政治成绩","dialogFrm.历史等级","dialogFrm.历史成绩","dialogFrm.化学等级","dialogFrm.化学成绩","dialogFrm.地理等级","dialogFrm.生物等级","dialogFrm.注意录取","dialogFrm.计生","dialogFrm.见义勇为","dialogFrm.军人","dialogFrm.三侨","dialogFrm.少数民族","dialogFrm.学科竞赛","dialogFrm.因公牺牲","dialogFrm.优干","dialogFrm.无两年学籍","dialogFrm.超三年学历","dialogFrm.省内非晋江户籍","dialogFrm.省外非晋江户籍","dialogFrm.泉州非晋江户籍","dialogFrm.往届生","dialogFrm.无籍生","dialogFrm.户籍名不一致","dialogFrm.备注","dialogFrm.库中姓名","dialogFrm.五年师院第一志愿校号","dialogFrm.五年师院校第一志愿名称","dialogFrm.第一志愿专业一代码","dialogFrm.第一志愿专业一","dialogFrm.第一志愿专业二代码","dialogFrm.第一志愿专业二","dialogFrm.五年师院第二志愿校号","dialogFrm.五年师院校第二志愿名称","dialogFrm.第二志愿专业一代码","dialogFrm.第二志愿专业一","dialogFrm.第二志愿专业二代码","dialogFrm.第二志愿专业二","dialogFrm.泉州统招第一志愿代码","dialogFrm.泉州统招第一志愿","dialogFrm.一级统招第一志愿代码","dialogFrm.一级统招第一志愿","dialogFrm.一级统招第二志愿代码","dialogFrm.一级统招第二志愿","dialogFrm.一级统招第三志愿代码","dialogFrm.一级统招第三志愿","dialogFrm.一级统招第四志愿代码","dialogFrm.一级统招第四志愿","dialogFrm.一级定向第一志愿代码","dialogFrm.一级定向第一志愿","dialogFrm.一级定向第二志愿代码","dialogFrm.一级定向第二志愿","dialogFrm.一级定向第三志愿代码","dialogFrm.一级定向第三志愿","dialogFrm.一级定向第四志愿代码","dialogFrm.一级定向第四志愿","dialogFrm.一级择校第一志愿代码","dialogFrm.一级择校第一志愿","dialogFrm.一级择校第二志愿代码","dialogFrm.一级择校第二志愿","dialogFrm.一级择校第三志愿代码","dialogFrm.一级择校第三志愿","dialogFrm.一级择校第四志愿代码","dialogFrm.一级择校第四志愿","dialogFrm.二级统招第一志愿代码","dialogFrm.二级统招第一志愿","dialogFrm.二级统招第二志愿代码","dialogFrm.二级统招第二志愿","dialogFrm.二级统招第三志愿代码","dialogFrm.二级统招第三志愿","dialogFrm.二级统招第四志愿代码","dialogFrm.二级统招第四志愿","dialogFrm.二级择校第一志愿代码","dialogFrm.二级择校第一志愿","dialogFrm.二级择校第二志愿代码","dialogFrm.二级择校第二志愿","dialogFrm.二级择校第三志愿代码","dialogFrm.二级择校第三志愿","dialogFrm.二级择校第四志愿代码","dialogFrm.二级择校第四志愿","dialogFrm.三级统招第一志愿代码","dialogFrm.三级统招第一志愿","dialogFrm.三级统招第二志愿代码","dialogFrm.三级统招第二志愿","dialogFrm.三级择校第一志愿代码","dialogFrm.三级择校第一志愿","dialogFrm.三级择校第二志愿代码","dialogFrm.三级择校第二志愿","dialogFrm.民办第一志愿代码","dialogFrm.民办第一志愿","dialogFrm.普高第一志愿代码","dialogFrm.普高第一志愿","dialogFrm.五年非师院第一志愿校号","dialogFrm.五年非师院校第一志愿名称","dialogFrm.非师第一志愿专业一代码","dialogFrm.非师第一志愿专业一","dialogFrm.非师第一志愿专业二代码","dialogFrm.非师第一志愿专业二","dialogFrm.五年非师院第二志愿校号","dialogFrm.五年非师院校第二志愿名称","dialogFrm.非师第二志愿专业一代码","dialogFrm.非师第二志愿专业一","dialogFrm.非师第二志愿专业二代码","dialogFrm.非师第二志愿专业二","dialogFrm.职专第一志愿校号","dialogFrm.职专第一志愿名称","dialogFrm.职专第一志愿专业一代码","dialogFrm.职专第一志愿专业一","dialogFrm.职专第一志愿专业二代码","dialogFrm.职专第一志愿专业二","dialogFrm.职专第二志愿校号","dialogFrm.职专第二志愿名称","dialogFrm.职专第二志愿专业一代码","dialogFrm.职专第二志愿专业一","dialogFrm.职专第二志愿专业二代码","dialogFrm.职专第二志愿专业二","dialogFrm.职专第三志愿校号","dialogFrm.职专第三志愿名称","dialogFrm.职专第三志愿专业一代码","dialogFrm.职专第三志愿专业一","dialogFrm.职专第三志愿专业二代码","dialogFrm.职专第三志愿专业二","dialogFrm.职专第四志愿校号","dialogFrm.职专第四志愿名称","dialogFrm.职专第四志愿专业一代码","dialogFrm.职专第四志愿专业一","dialogFrm.职专第四志愿专业二代码","dialogFrm.职专第四志愿专业二","dialogFrm.控制线","dialogFrm.志愿审核","dialogFrm.sys_add_user","dialogFrm.sys_add_date","dialogFrm.sys_upd_user","dialogFrm.sys_upd_date","dialogFrm.rank_score","dialogFrm.rank","dialogFrm.资格审查","dialogFrm.成绩排名","dialogFrm.中考年","dialogFrm.中学id","dialogFrm.中学代号","dialogFrm.生成者","dialogFrm.生成日期","dialogFrm.更新者","dialogFrm.更新日期"
+			];
+var numeric = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];			
+
+function enlarge(){
+	changeSize(1.1, 1.1);
+}
+function narrow(){
+	changeSize(0.9, 0.9);
+}
+function changeSize(h , w){
+
+	var o = document.getElementById("div-preview");
+	var height = o.offsetHeight;  //高度
+	var width = o.offsetWidth;  //宽度
+	o.style.height = height * h +'px';
+	o.style.width = width * w +'px';
+}
+var r = 0;
+var turnDeg = 90;
+function turnAround(angle){
+	debugger
+	var element =  document.getElementById("div-preview");
+	
+	if(angle){
+		r += angle;
+	} else {
+		r += turnDeg;	
+	}
+	
+	//element.style.webkitTransform="rotate("+defaultDeg+"deg)"
+	//element.style.MozTransform="rotate("+defaultDeg+"deg)"
+	//element.style.msTransform="rotate("+defaultDeg+"deg)"
+	//element.style.OTransform="rotate("+defaultDeg+"deg)"
+	//element.style.transform="rotate("+defaultDeg+"deg)";
+	
+	 element.style.MozTransform = "rotate(" + r + "deg)";
+	 element.style.webkitTransform ="rotate(" + r + "deg)";
+	 element.style.msTransform = "rotate(" + r + "deg)";
+	 element.style.OTransform = "rotate(" + r + "deg)";
+	 element.style.transform = "rotate(" + r + "deg)";
+}
+
+
+
+var winner = [9,21,22,26,30,04,12];
+
+function winningCheck(){
+	
+	
+	var winNums = 0;
+	for(var i = 0; i < arr.length ; i++) {
+		
+		var num = getSameNums(winner, arr[i]);
+		
+		if(num >= 4 ){
+			console.log("第"+i+"注中奖,号码为"+ arr[i]);
+			winLevel(num, arr[i]);
+			winNums++;
+		} 
+		
+	}
+	
+	console.log("一共买了"+arr.length+"注,中奖了"+winNums+"注,中奖率为"+winNums/arr.length+"%, 其中"+level1s.length+"注一等奖,"+level2s.length+"注二等奖,"+level3s.length+"注三等奖,"+level4s.length+"注四等奖");
+}
+
+function getSameNums(winArr, buyArr){ 
+	return winArr.filter(function (val) { return buyArr.indexOf(val) > -1 }).length;
+}
+
+var level1s = [];
+var level2s = [];
+var level3s = [];
+var level4s = [];
+
+ function winLevel(numb, numList){
+	switch(numb){
+		case 4:
+			level4s.push(numList);
+			console.log("恭喜四等奖");
+			break;
+		case 5:
+		    level3s.push(numList);
+			console.log("恭喜三等奖");
+			break;		
+		case 6:
+			level2s.push(numList);
+			console.log("恭喜二等奖");
+			break;
+		case 7:
+			level1s.push(numList);
+			console.log("恭喜一等奖");
+			break;
+		default:
+		
+			break;
+	}
+ 
+ }
+</script>
+</html>
